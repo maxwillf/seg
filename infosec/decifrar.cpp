@@ -14,26 +14,28 @@ int main(int argc,char * argv[]) {
 	int sizeOfData = strlen(argv[1]);
 
 	std::ifstream ifs(argv[2]);
-	std::ofstream ofs(argv[3]);
 	std::string line;
 	std::string line2;
-	
 	int i = 0;	
+
 	while(getline(ifs,line)){
 		line2 = "";
 		for(auto it = line.begin(); it < line.end(); it++){
-			int currentDataValue = argv[1][i] - '0';
-			char newCharValue = (*it + currentDataValue);
-			
+
 			if(*it == ' '){
 				line2 += ' ';
 				continue;
 			}
 
-			if(newCharValue > 122){
-				newCharValue = 97 + ((newCharValue - 97) % 26);
+			int currentDataValue = argv[1][i] - '0';
+			char newCharValue = (*it - currentDataValue);
+
+			if(newCharValue < 97){
+				int diff = 97 - newCharValue;
+				newCharValue = 123 - diff;
 				line2 += newCharValue;
 			}
+
 			else {
 			line2 += newCharValue;
 			}
