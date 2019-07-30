@@ -23,17 +23,27 @@ int main(int argc,char * argv[]) {
 		//ss = std::stringstream(line);
 		line2 = "";
 		for(auto it = line.begin(); it < line.end(); it++){
-			int currentDataValue = argv[1][i] - 96;
-			int newCharValue = (line[i] + currentDataValue);
+			int currentDataValue = argv[1][i] - '0';
+			int newCharValue = (*it + currentDataValue);
+			/*if(*it == 'n'){
+				std::cout << currentDataValue << std::endl;
+				std::cout << *it << std::endl;
+				std::cout << newCharValue << std::endl;
+			}*/
 			//std::cout << int(line[i]) << std::endl;
 			//std::cout << newCharValue << std::endl;
 			if(newCharValue > 122){
-				line2 += (97 + ((newCharValue - 97) % 26));
+				std::cout << currentDataValue << std::endl;
+				std::cout << *it << std::endl;
+				std::cout << newCharValue << std::endl;
+				line2 += (newCharValue - 97) % 26;
 			}
 			else {
-			line2 += (line[i] + argv[1][i] % sizeOfData);
+			line2 += newCharValue;
 			}
+
 			i++;
+			if(i > sizeOfData) i = 0;
 		}
 		std::cout << line2 << std::endl;
 	}
