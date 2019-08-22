@@ -38,5 +38,5 @@ int main(int argc, char * argv[]){
 	// dê 
 	// compilar com g++ -std=c++11 caesar.cpp -o caesar
 	// rodar com ./caesar input.txt out
-	// cat out33 no shell e lá estará a mensagem decodificada
+	// no arquivo out a resposta estará na chave 33
 }
