@@ -1,7 +1,6 @@
 import cv2
 import sys
 import numpy as np
-import argparse
 
 def changeLastBit(byte, bitChar):
     if bitChar == '0':
@@ -9,77 +8,63 @@ def changeLastBit(byte, bitChar):
     else:
         return byte | 0b00000001
 
-
 def getLastBit(byte):
     return '{0:08b}'.format(byte)[7]
-
 
 def getLetterAsByte(char):
     return '{0:08b}'.format(ord(char))
 
-
 def cipher():
-	src = sys.argv[1]
-	message = sys.argv[2]
-	message += '\x03'
+  src = sys.argv[1]
+  message = sys.argv[2]
+  message += '\x03'
 
-	print(getLetterAsByte(message[-1]))
+  image = cv2.imread(src)
 
-	bitsNeededForMessage = len(message) * 8
-	image = cv2.imread(src)
-	imageSize = np.prod(image.shape)
+  old_shape = image.shape
 
-	old_shape = image.shape
+  image = image.reshape(np.prod(image.shape))
 
-	image = image.reshape(np.prod(image.shape))
+  pixelIndex = 0
 
-	pixelIndex = 0
-
-	amountOfLines = old_shape[0]
-	sizeOfLine = old_shape[1]
-
-	for letters in message:
-	    for bit in getLetterAsByte(letters)[::-1]:
-		image[pixelIndex] = changeLastBit(image[pixelIndex],bit)
-		pixelIndex += 1
-	    pixelIndex += 1
-
-
-	status = cv2.imwrite("./out.bmp", image.reshape(old_shape))
-	print("Succesfully hidden message: ", status)
+  for letter in message:
+    for bit in getLetterAsByte(letter)[::-1]:
+      image[pixelIndex] = changeLastBit(image[pixelIndex],bit)
+      pixelIndex += 1
+    pixelIndex += 1
+  image = image.reshape(old_shape)
+  status = cv2.imwrite("./out.bmp", image)
+  print("Succesfully hidden message: ", status)
 
 
 def decipher():
-	image = cv2.imread("./out.bmp")
+  image = cv2.imread("./out.bmp")
+  pixelIndex = 0
+  imageSize = np.prod(image.shape)
+  image = image.reshape(imageSize)
+  decodedWord = ""
+  readByte = ""
 
-	pixelIndex = 0
+  # while readByte isn't End Of Text Character
+  while(pixelIndex < imageSize):
+    #readByte = getLastBit(image[pixelIndex]) + readByte
+    LastBit = getLastBit(image[pixelIndex])
 
-	image = image.reshape(np.prod(image.shape))
+    readByte = LastBit + readByte
+    pixelIndex += 1
 
-	decodedWord = ""
-	readByte = ""
+    if(len(readByte) == 8):
+      decodedWord += chr(int(readByte,2))
+      if int(readByte,2) == 3:
+          print("Message found in file:", decodedWord)
+          exit(0)
+      readByte = "" 
+      # pular o nono byte
+      pixelIndex += 1
+  print("No message was found")
 
-	for letters in message:
-	    for bit in getLetterAsByte(letters):
-
-		readByte = getLastBit(image[pixelIndex]) + readByte
-
-		if bit == 3:
-		    print("Message found in file:", decodedWord)
-		    break
-
-		readByte = getLastBit(image[pixelIndex]) + readByte
-
-		if(decodedWord == message):
-		    print("Message found in file:", decodedWord)
-		    break
-		pixelIndex += 1
-
-	    # pular o nono byte
-	    pixelIndex += 1
-
-
-if "-d" in sys.argv:
-	decipher()
-else:
-	cipher()
+if __name__ == "__main__":
+  if "-d" in sys.argv:
+    decipher()
+  else:
+    cipher()
