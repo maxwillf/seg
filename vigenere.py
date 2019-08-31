@@ -1,11 +1,19 @@
-alfabeto = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 import sys
 
+alfabeto = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 textoClaro = sys.argv[1]
 chave = sys.argv[2]
 
+mensagemDecifrada = ""
 for index,letter in enumerate(textoClaro):
-	chaveIndex = index % len(chave)
-	chaveIndex = alfabeto.find(chave[chaveIndex])
-	newIndex = (alfabeto.find(letter) + chaveIndex) % len(alfabeto)
-	print(alfabeto[newIndex])
+    chaveIndex = index % len(chave)
+    letterIndex = alfabeto.find(letter)
+    print(letterIndex)
+    if letterIndex == -1:
+       mensagemDecifrada += letter
+       continue 
+    print(letterIndex,alfabeto[letterIndex])
+    newChaveIndex = alfabeto.find(chave[chaveIndex])
+    newIndex = (letterIndex + newChaveIndex) % len(alfabeto)
+    mensagemDecifrada += alfabeto[newIndex]
+print(mensagemDecifrada)

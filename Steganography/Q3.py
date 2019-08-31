@@ -16,7 +16,7 @@ def getLetterAsByte(char):
 
 def cipher():
   src = sys.argv[1]
-  message = sys.argv[2]
+  message = sys.argv[3]
   message += '\x03'
 
   image = cv2.imread(src)
@@ -33,7 +33,9 @@ def cipher():
       pixelIndex += 1
     pixelIndex += 1
   image = image.reshape(old_shape)
-  status = cv2.imwrite("./out.bmp", image)
+
+  outputPath = sys.argv[2]
+  status = cv2.imwrite(outputPath, image)
   print("Succesfully hidden message: ", status)
 
 
@@ -54,10 +56,10 @@ def decipher():
     pixelIndex += 1
 
     if(len(readByte) == 8):
-      decodedWord += chr(int(readByte,2))
       if int(readByte,2) == 3:
           print("Message found in file:", decodedWord)
           exit(0)
+      decodedWord += chr(int(readByte,2))
       readByte = "" 
       # pular o nono byte
       pixelIndex += 1
